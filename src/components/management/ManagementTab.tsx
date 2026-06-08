@@ -56,18 +56,18 @@ export function ManagementTab() {
     setIsStudentModalOpen(true);
   };
 
-  const handleSaveStudent = (values: StudentFormData) => {
+  const handleSaveStudent = async (values: StudentFormData) => {
     if (editingStudent) {
-      updateStudent(editingStudent.id, values);
+      await updateStudent(editingStudent.id, values);
       message.success('แก้ไขข้อมูลนักเรียนเรียบร้อย');
     } else {
-      addStudent(values);
+      await addStudent(values);
       message.success('เพิ่มนักเรียนเรียบร้อย');
     }
   };
 
-  const handleDeleteStudent = (id: number) => {
-    deleteStudent(id);
+  const handleDeleteStudent = async (id: number) => {
+    await deleteStudent(id);
     message.success('ลบนักเรียนเรียบร้อย');
   };
 
@@ -81,27 +81,27 @@ export function ManagementTab() {
     setIsClassModalOpen(true);
   };
 
-  const handleSaveClass = (name: string) => {
+  const handleSaveClass = async (name: string) => {
     if (editingClass) {
-      if (updateClass(editingClass, name)) {
+      if (await updateClass(editingClass, name)) {
         message.success('แก้ไขระดับชั้นเรียบร้อย');
       } else {
         message.error('ไม่สามารถแก้ไขได้ ชื่อซ้ำหรือข้อมูลไม่ถูกต้อง');
       }
-    } else if (addClass(name)) {
+    } else if (await addClass(name)) {
       message.success('เพิ่มระดับชั้นเรียบร้อย');
     } else {
       message.warning('ระดับชั้นนี้มีอยู่แล้ว');
     }
   };
 
-  const handleDeleteClass = (name: string) => {
+  const handleDeleteClass = async (name: string) => {
     const count = countStudentsByClass(name);
     if (count > 0) {
       message.error(`ไม่สามารถลบได้ มีนักเรียน ${count} คนในชั้นนี้`);
       return;
     }
-    if (deleteClass(name)) {
+    if (await deleteClass(name)) {
       message.success('ลบระดับชั้นเรียบร้อย');
     }
   };
@@ -116,27 +116,27 @@ export function ManagementTab() {
     setIsRoomModalOpen(true);
   };
 
-  const handleSaveRoom = (name: string) => {
+  const handleSaveRoom = async (name: string) => {
     if (editingRoom) {
-      if (updateRoom(editingRoom, name)) {
+      if (await updateRoom(editingRoom, name)) {
         message.success('แก้ไขห้องเรียนเรียบร้อย');
       } else {
         message.error('ไม่สามารถแก้ไขได้ ชื่อซ้ำหรือข้อมูลไม่ถูกต้อง');
       }
-    } else if (addRoom(name)) {
+    } else if (await addRoom(name)) {
       message.success('เพิ่มห้องเรียนเรียบร้อย');
     } else {
       message.warning('ห้องนี้มีอยู่แล้ว');
     }
   };
 
-  const handleDeleteRoom = (name: string) => {
+  const handleDeleteRoom = async (name: string) => {
     const count = countStudentsByRoom(name);
     if (count > 0) {
       message.error(`ไม่สามารถลบได้ มีนักเรียน ${count} คนในห้องนี้`);
       return;
     }
-    if (deleteRoom(name)) {
+    if (await deleteRoom(name)) {
       message.success('ลบห้องเรียนเรียบร้อย');
     }
   };
