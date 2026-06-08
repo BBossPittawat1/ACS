@@ -13,6 +13,7 @@ export const INITIAL_STUDENTS: Student[] = [
     room: '1',
     avatar: '👧🏻',
     no: 1,
+    gender: 'F',
   },
   {
     id: 2,
@@ -22,6 +23,7 @@ export const INITIAL_STUDENTS: Student[] = [
     room: '1',
     avatar: '👦🏽',
     no: 2,
+    gender: 'M',
   },
   {
     id: 3,
@@ -31,6 +33,7 @@ export const INITIAL_STUDENTS: Student[] = [
     room: '1',
     avatar: '👧🏼',
     no: 3,
+    gender: 'F',
   },
 ];
 
