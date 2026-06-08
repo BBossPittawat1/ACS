@@ -1,33 +1,41 @@
-import fs from 'fs/promises';
-import path from 'path';
+import { createClient } from 'redis';
 
-const DB_DIR = path.join(process.cwd(), 'database');
+const client = createClient({
+  url: process.env.REDIS_URL
+});
 
-async function ensureDbDir() {
-  try {
-    await fs.access(DB_DIR);
-  } catch {
-    await fs.mkdir(DB_DIR, { recursive: true });
+client.on('error', (err) => console.error('Redis Client Error', err));
+
+let isConnected = false;
+
+async function ensureConnection() {
+  if (!isConnected) {
+    await client.connect();
+    isConnected = true;
   }
 }
 
-export async function readDb<T>(filename: string, defaultValue: T): Promise<T> {
-  await ensureDbDir();
-  const filePath = path.join(DB_DIR, filename);
+export async function readDb<T>(key: string, defaultValue: T): Promise<T> {
+  await ensureConnection();
   try {
-    const data = await fs.readFile(filePath, 'utf-8');
-    return JSON.parse(data) as T;
-  } catch (error: any) {
-    if (error.code === 'ENOENT') {
-      await writeDb(filename, defaultValue);
+    const data = await client.get(key);
+    if (!data) {
+      await writeDb(key, defaultValue);
       return defaultValue;
     }
-    throw error;
+    return JSON.parse(data) as T;
+  } catch (error) {
+    console.error(`Error reading ${key} from Redis:`, error);
+    return defaultValue;
   }
 }
 
-export async function writeDb<T>(filename: string, data: T): Promise<void> {
-  await ensureDbDir();
-  const filePath = path.join(DB_DIR, filename);
-  await fs.writeFile(filePath, JSON.stringify(data, null, 2), 'utf-8');
+export async function writeDb<T>(key: string, data: T): Promise<void> {
+  await ensureConnection();
+  try {
+    await client.set(key, JSON.stringify(data));
+  } catch (error) {
+    console.error(`Error writing ${key} to Redis:`, error);
+    throw error;
+  }
 }
